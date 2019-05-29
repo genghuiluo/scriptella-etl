@@ -24,6 +24,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * Represents a global <code>etl</code> variable available for all ETL file elements.
@@ -255,6 +257,18 @@ public class EtlVariable implements ParametersCallback {
             }
         }
 
+        public Object escapeJson(Object object) { return object == null ? "null" : StringEscapeUtils.escapeJson(object.toString()); }
+
+        public Object escapeJava(Object object) { return object == null ? "null" : StringEscapeUtils.escapeJava(object.toString()); }
+
+        public Object convertToUTC(Object object, String fmt) throws Exception {
+            SimpleDateFormat parsedFmt = new SimpleDateFormat(fmt);
+
+            SimpleDateFormat utcFmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            utcFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+            return utcFmt.format(parsedFmt.parse(object.toString()));
+        }
     }
 
     /**
